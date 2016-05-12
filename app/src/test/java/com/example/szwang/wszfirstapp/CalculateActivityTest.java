@@ -7,16 +7,13 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.Robolectric;
-import org.robolectric.RuntimeEnvironment;
 import org.robolectric.annotation.Config;
-import org.robolectric.shadows.ShadowActivity;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertThat;
 import static org.robolectric.Shadows.shadowOf;
 
 @Config(sdk = 21)
@@ -79,13 +76,13 @@ public class CalculateActivityTest {
     @Test
     public void shouldReturnFourWhenClickOneSumThree() throws Exception {
         // input 1
-        calculateActivity.buttonNum[1].performClick();
+        calculateActivity.buttonNum.get(1).performClick();
         // input +
-        calculateActivity.buttonOption[2].performClick();
+        calculateActivity.buttonOption.get(2).performClick();
         //input 3
-        calculateActivity.buttonNum[3].performClick();
+        calculateActivity.buttonNum.get(3).performClick();
         //input =
-        calculateActivity.buttonOption[4].performClick();
+        calculateActivity.buttonOption.get(4).performClick();
         Double request = 4D;
         Double result = Double.parseDouble(calculateActivity.result.getText().toString());
         assertEquals(request, result);

@@ -7,10 +7,12 @@
         android:text="clear history"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
+
     <ListView
         android:id="@+id/list_history"
         android:layout_marginTop="70dp"
         android:layout_width="match_parent"
         android:layout_height="match_parent" >
     </ListView>
+
 </RelativeLayout>

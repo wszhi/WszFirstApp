@@ -8,7 +8,8 @@ import org.junit.runner.RunWith;
 import org.robolectric.Robolectric;
 import org.robolectric.annotation.Config;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.robolectric.Shadows.shadowOf;
 
 @Config(sdk = 21)
@@ -33,7 +34,7 @@ public class HistoryActivityTest {
         Intent nextStartedIntent = shadowOf(historyActivity).getNextStartedActivity();
         assertEquals(CalculateActivity.class.getName(), nextStartedIntent.getComponent().getClassName());
 
-        calculateActivity.buttonOption[7].performClick();
+        calculateActivity.buttonOption.get(7).performClick();
         nextStartedIntent = shadowOf(calculateActivity).getNextStartedActivity();
         assertEquals(HistoryActivity.class.getName(), nextStartedIntent.getComponent().getClassName());
         assertEquals(0,historyActivity.listView.getMaxScrollAmount());

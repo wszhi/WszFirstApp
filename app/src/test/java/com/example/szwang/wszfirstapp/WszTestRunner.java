@@ -6,10 +6,8 @@ import org.robolectric.RobolectricTestRunner;
 import org.robolectric.annotation.Config;
 import org.robolectric.manifest.AndroidManifest;
 
-import java.util.Properties;
-
-
 import java.io.File;
+import java.util.Properties;
 
 public class WszTestRunner extends RobolectricTestRunner {
 

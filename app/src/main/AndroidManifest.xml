@@ -14,7 +14,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".CalculateActivity"
+            android:name="com.example.szwang.wszfirstapp.CalculateActivity"
             android:label="calculate">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -23,7 +23,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".HistoryActivity"
+            android:name="com.example.szwang.wszfirstapp.HistoryActivity"
             android:label="history">
         </activity>
     </application>

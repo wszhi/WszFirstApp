@@ -7,20 +7,26 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import com.example.szwang.wszfirstapp.dao.HistoryDao;
+import com.example.szwang.wszfirstapp.dao.HistoryDbService;
 import com.example.szwang.wszfirstapp.dao.HistoryService;
-import com.example.szwang.wszfirstapp.db.DbOpenHelper;
 
 import java.util.ArrayList;
+import java.util.List;
 
-public class CalculateActivity extends Activity implements View.OnClickListener {
+import butterknife.BindView;
+import butterknife.BindViews;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
+
+public class CalculateActivity extends Activity {
+    @BindView(R.id.result)
     protected EditText result;
-    private int[] idOption = { R.id.multi, R.id.division, R.id.sum, R.id.minus,R.id.equal,R.id.delete,R.id.clear,R.id.history };
-    protected Button[] buttonOption = new Button[idOption.length];
+    @BindViews({ R.id.multi, R.id.division, R.id.sum, R.id.minus,R.id.equal,R.id.delete,R.id.clear,R.id.history })
+    List<Button> buttonOption;
 
-    private int[] idNum = { R.id.zero, R.id.one, R.id.two, R.id.three,
-            R.id.four, R.id.five, R.id.six, R.id.seven, R.id.eight, R.id.nine, R.id.point };
-    protected Button[] buttonNum = new Button[idNum.length];
+    @BindViews({ R.id.zero, R.id.one, R.id.two, R.id.three,
+            R.id.four, R.id.five, R.id.six, R.id.seven, R.id.eight, R.id.nine, R.id.point })
+    List<Button> buttonNum;
     static String SUM =  "+";
     static String MINUS =  "-";
     static String MULTI =  "*";
@@ -28,61 +34,51 @@ public class CalculateActivity extends Activity implements View.OnClickListener 
     SharedPreferences sharedPreferences;
     SharedPreferences.Editor sharedPreferencesEditor;
 
-    private DbOpenHelper dbOpenHelper;
     HistoryService historyService;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.calculate);
-        dbOpenHelper=new DbOpenHelper(this,"history.db",null,1);
-        historyService= new HistoryDao(this);
-        for (int i = 0; i < idOption.length; i++) {
-            buttonOption[i] = (Button) findViewById(idOption[i]);
-            buttonOption[i].setOnClickListener(this);
-        }
-        for (int i = 0; i < idNum.length; i++) {
-            buttonNum[i] = (Button) findViewById(idNum[i]);
-            buttonNum[i].setOnClickListener(this);
-        }
-        result=(EditText)findViewById(R.id.result);
+        ButterKnife.bind(this);
+        historyService= new HistoryDbService(this);
         sharedPreferences=getSharedPreferences("resultOfCalculate", MODE_PRIVATE);
         sharedPreferencesEditor=sharedPreferences.edit();
         String lastNumber = sharedPreferences.getString("lastNumber","");
         result.setText(lastNumber);
 
     }
-    @Override
-    public void onClick(View v) {
-        if(v.getId() != R.id.equal && v.getId() != R.id.delete && v.getId() != R.id.history) {
-            String inputText = result.getText().toString();
-            Button button=(Button) findViewById(v.getId());
-            result.setText(inputText + button.getText());
+
+    @OnClick({ R.id.multi, R.id.division, R.id.sum, R.id.minus,R.id.zero, R.id.one, R.id.two, R.id.three,
+            R.id.four, R.id.five, R.id.six, R.id.seven, R.id.eight, R.id.nine, R.id.point })
+    public void showText(View v) {
+        String inputText = result.getText().toString();
+        Button button=(Button) findViewById(v.getId());
+        result.setText(inputText + button.getText());
+    }
+    @OnClick(R.id.delete)
+    public void delete() {
+        String results=result.getText().toString();
+        if(results.length()>0) {
+            result.setText(results.substring(0, results.length()-1));
         }
-        switch (v.getId()) {
-            case R.id.delete:
-                String results=result.getText().toString();
-                if(results.length()>0) {
-                    result.setText(results.substring(0, results.length()-1));
-                }
-                break;
-            case R.id.clear:
-                result.setText("");
-                break;
-            case R.id.history:
-                Intent intent = new Intent(CalculateActivity.this, HistoryActivity.class);
-                startActivity(intent);
-                break;
-            case R.id.equal:
-                results= result.getText().toString();
-                String resultNumber = calculateAction(results);
-                result.setText(resultNumber);
-                sharedPreferencesEditor.putString("lastNumber", resultNumber);
-                sharedPreferencesEditor.commit();
-                historyService.addHistory(results+"="+resultNumber);
-                break;
-            default:
-                break;
-        }
+    }
+    @OnClick(R.id.clear)
+    public void clear() {
+        result.setText("");
+    }
+    @OnClick(R.id.history)
+    public void history() {
+        Intent intent = new Intent(CalculateActivity.this, HistoryActivity.class);
+        startActivity(intent);
+    }
+    @OnClick(R.id.equal)
+    public void equal() {
+        String results=result.getText().toString();
+        String resultNumber = calculateAction(results);
+        result.setText(resultNumber);
+        sharedPreferencesEditor.putString("lastNumber", resultNumber);
+        sharedPreferencesEditor.commit();
+        historyService.addHistory(results + "=" + resultNumber);
     }
 
     public String calculateAction(String calculateString)
